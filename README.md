@@ -5,8 +5,6 @@
 [![codecov](https://codecov.io/gh/zs5460/ipconv/branch/master/graph/badge.svg)](https://codecov.io/gh/zs5460/ipconv)
 [![GoDoc](https://godoc.org/github.com/zs5460/ipconv?status.svg)](https://godoc.org/github.com/zs5460/ipconv)
 
-ipconv utility package
-
 ## Install
 
 ```bash
