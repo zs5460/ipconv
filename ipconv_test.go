@@ -29,8 +29,14 @@ func TestCIDR2IPS(t *testing.T) {
 			wantErr: true,
 		},
 		{
+			name:    "invalid CIDR",
+			args:    args{"172.16.0.2/24"},
+			wantIps: nil,
+			wantErr: true,
+		},
+		{
 			name:    "invalid mask",
-			args:    args{"172.16.0.0/33"},
+			args:    args{"172.16.0.0/12"},
 			wantIps: nil,
 			wantErr: true,
 		},
@@ -64,6 +70,18 @@ func TestRange2IPS(t *testing.T) {
 			args:    args{"172.16.0.1-4"},
 			wantIps: []string{"172.16.0.1", "172.16.0.2", "172.16.0.3", "172.16.0.4"},
 			wantErr: false,
+		},
+		{
+			name:    "invalid ip-range",
+			args:    args{"172.16.0.12"},
+			wantIps: nil,
+			wantErr: true,
+		},
+		{
+			name:    "invalid start IP",
+			args:    args{"172.16.0.256-10"},
+			wantIps: nil,
+			wantErr: true,
 		},
 		{
 			name:    "invalid IP",

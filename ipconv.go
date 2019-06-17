@@ -40,17 +40,10 @@ func CIDR2IPS(ipr string) (ips []string, err error) {
 	}
 
 	var iprangeMask int
-	if slashPos := strings.LastIndex(ipr, "/"); slashPos == -1 {
-		iprangeMask = 32
-	} else {
-		iprangeMask, err = strconv.Atoi(ipr[slashPos+1:])
-		if err != nil {
-			return nil, err
-		}
-	}
-
-	if iprangeMask > 32 || iprangeMask < 16 {
-		return nil, errors.New("Invalid Mask")
+	slashPos := strings.LastIndex(ipr, "/")
+	iprangeMask, _ = strconv.Atoi(ipr[slashPos+1:])
+	if iprangeMask < 16 {
+		return nil, errors.New("Invalid Mask(too small)")
 	}
 
 	ipstart := IP2Long(ip)
@@ -64,8 +57,7 @@ func CIDR2IPS(ipr string) (ips []string, err error) {
 
 // Range2IPS returns a ip list of a iprange
 func Range2IPS(ipr string) (ips []string, err error) {
-	reg := regexp.MustCompile(`^\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}-\d{1,3}$`)
-	if !reg.MatchString(ipr) {
+	if !reIPRange.MatchString(ipr) {
 		return nil, errors.New("Invalid ip-range")
 	}
 	tmp := strings.Split(ipr, "-")[0]
@@ -75,14 +67,8 @@ func Range2IPS(ipr string) (ips []string, err error) {
 
 	tmpIP := strings.Split(ipr, ".")
 	prefix := tmpIP[0] + "." + tmpIP[1] + "." + tmpIP[2] + "."
-	start, err := strconv.Atoi(strings.Split(tmpIP[3], "-")[0])
-	if err != nil {
-		return nil, err
-	}
-	end, err := strconv.Atoi(strings.Split(tmpIP[3], "-")[1])
-	if err != nil {
-		return nil, err
-	}
+	start, _ := strconv.Atoi(strings.Split(tmpIP[3], "-")[0])
+	end, _ := strconv.Atoi(strings.Split(tmpIP[3], "-")[1])
 	if end < start || end > 255 {
 		return nil, errors.New("Invalid end ip")
 	}
