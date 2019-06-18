@@ -30,28 +30,27 @@ func Long2IP(long uint) net.IP {
 	return net.IPv4(byte(long>>24), byte(long>>16), byte(long>>8), byte(long))
 }
 
-// CIDR2IPS returns a ip list if CIDR.
+// CIDR2IPS returns a ip list of CIDR.
 func CIDR2IPS(ipr string) (ips []string, err error) {
 	ip, ipnet, err := net.ParseCIDR(ipr)
 	if err != nil {
 		return nil, err
-	} else if !ip.Equal(ipnet.IP) {
+	}
+	if !ip.Equal(ipnet.IP) {
 		return nil, errors.New("Invalid CIDR")
 	}
 
-	var iprangeMask int
-	slashPos := strings.LastIndex(ipr, "/")
-	iprangeMask, _ = strconv.Atoi(ipr[slashPos+1:])
-	if iprangeMask < 16 {
+	var mask int
+	mask, _ = strconv.Atoi(strings.Split(ipr, "/")[1])
+	if mask < 16 {
 		return nil, errors.New("Invalid Mask(too small)")
 	}
 
 	ipstart := IP2Long(ip)
-	hostCount := (1 << uint(32-iprangeMask)) - 1
+	hostCount := (1 << uint(32-mask)) - 1
 	for i := 0; i <= hostCount; i++ {
 		ips = append(ips, Long2IP(ipstart+uint(i)).String())
 	}
-
 	return ips, nil
 }
 
